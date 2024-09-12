@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        a {
+            text-decoration: none;
+        }
+        .min-h-screen {
+            min-height: 100vh; /* Ensure full viewport height */
+            display: flex; /* Make the container a flex container */
+        }
+        .flex {
+            display: flex;
+            flex: 1;
+        }
+        .bg-muted {
+            background-color: #f5f5f5;
+        }
+        .w-full {
+            width: 100%;
+        }
+        .aside {
+            background-color: #ffffff;
+            border-right: 1px solid #ccc;
+            width: 20%;
+            box-sizing: border-box; /* Include padding and borders in the element’s width and height */
+        }
+        nav {
+            padding-top: 20px;
+            text-align: center;
+        }
+        .nav-item {
+            margin-bottom: 15px;
+            width: 40px;
+            height: 40px;
+            background-color: #e0e0e0;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+        }
+        .content {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #ccc;
+            padding: 10px 20px;
+        }
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+        }
+        .breadcrumb a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        .breadcrumb-separator {
+            margin: 0 5px;
+        }
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            flex: 1;
+        }
+        .card-header {
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 24px;
+            margin: 0;
+        }
+        .card-description {
+            color: #666;
+            margin: 5px 0 0;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+        .grid-item {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .grid-item:hover {
+            background-color: #e9ecef;
+        }
+        .grid-item svg {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 10px;
+        }
+        .grid-item span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="flex min-h-screen w-full bg-muted">
+        <aside class="aside">
+            <nav>
+                <h2> MedVantage </h2>
+                <h3>Admin Panel </h3><br><hr>
+                <br>
+                <div class="nav-item">
+                    <!-- Package Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                        <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                        <path d="M12 3v6"/>
+                    </svg>
+                </div>
+                <div class="nav-item">
+                    <!-- User Plus Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <line x1="19" x2="19" y1="8" y2="14"/>
+                        <line x1="22" x2="16" y1="11" y2="11"/>
+                    </svg>
+                </div>
+                <div class="nav-item">
+                    <!-- User Check Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <polyline points="16 11 18 13 22 9"/>
+                    </svg>
+                </div>
+                <div class="nav-item">
+                    <!-- Users Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    
+                </div>
+                
+                <div class="nav-item">
+                    <!-- Credit Card Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect width="20" height="14" x="2" y="5" rx="2"/>
+                        <line x1="2" x2="22" y1="10" y2="10"/>
+                    </svg>
+                </div>
+                <div class="nav-item">
+                    <!-- Log Out Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" x2="9" y1="12" y2="12"/>
+                    </svg>
+                </div>
+            </nav>
+        </aside>
+        <div class="content">
+            <header class="header">
+                <nav class="breadcrumb">
+                    <a href="#">Dashboard</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span>Admin Panel</span>
+                </nav>
+                <div style="margin-top: 10px;">
+                    <input type="search" placeholder="Search..." style="padding: 5px 10px; width: 100%; max-width: 300px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+            </header>
+            <main>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Admin Panel</h2>
+                        <p class="card-description">Manage your clinic's operations.</p>
+                    </div>
+                    <div class="grid">
+                        <div class="grid-item">
+                            <a href="{% url 'add-doctor' %}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <line x1="19" x2="19" y1="8" y2="14"/>
+                                <line x1="22" x2="16" y1="11" y2="11"/>
+                            </svg>
+                            <br><span>Add Doctor</span> </a>
+                        </div>
+                        <div class="grid-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <polyline points="16 11 18 13 22 9"/>
+                            </svg>
+                            <br><span>Manage Appointments</span>
+                        </div>
+                        <div class="grid-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
+                                <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/>
+                                <path d="M12 3v6"/>
+                            </svg>
+                            <br><span>Manage Inventory</span>
+                        </div>
+                        <div class="grid-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="20" height="14" x="2" y="5" rx="2"/>
+                                <line x1="2" x2="22" y1="10" y2="10"/>
+                            </svg>
+                            <br><span>Manage Billing</span>
+                        </div>
+                        <div class="grid-item">
+                            <a href="{% url 'admin_manage_users' %}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                            <br><span>Manage Users</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    {% block  content %} {%endblock content%}
+
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

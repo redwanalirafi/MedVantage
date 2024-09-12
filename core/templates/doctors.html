@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+
+
+        {% for doctor in doctors %}
+            {% if forloop.first %}<div class="row">{% endif %}
+            <div class="col">
+                <div class="card my-2" style="width: 18rem;">
+                    <div class="card-body text-center">
+                        <!-- Doctor Icon -->
+                        <img src="https://cdn-icons-png.flaticon.com/512/9193/9193824.png" width="50%" class="rounded-circle mb-3" alt="Doctor Icon">
+                        <h5 class="card-title">{{doctor.user.first_name}} {{doctor.user.last_name}}</h5>
+                        <p class="card-text text-muted">{{doctor.designation}}</p>
+                        <a href="../create-appointment/{{doctor.user.username}}" class="btn btn-outline-dark">Book Appointment</a>
+                    </div>
+                </div>
+            </div>
+            {% if forloop.counter|divisibleby:3 %}</div><div class="row">{% endif %}
+            {% if forloop.last %}</div>{% endif %}
+        {% endfor %}
+    </div>
+        
+{% endblock content %}

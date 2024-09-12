@@ -1,0 +1,103 @@
+{% extends "base_doc.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Booking Card</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            font-size: 1.2rem;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .btn-primary {
+            width: 100%;
+            border-radius: 20px;
+        }
+        .form-control, .custom-file-input {
+            border-radius: 10px;
+        }
+        .custom-file-label {
+            border-radius: 10px;
+        }
+        .fee-section {
+            font-size: 1.5rem;
+            color: #007bff;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header text-center">
+                        Confirming Appointment.
+                    </div>
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            
+    
+                            <!-- Patient Name Field (auto-filled with logged-in user's username) -->
+                            <div class="form-group">
+                                <label for="patientName">Enter a Google Meet Link</label>
+                                <input type="text" class="form-control" name="meet" value="" >
+                            </div>
+    
+                            
+                            
+    
+                            <!-- Fee Section -->
+                            <div class="fee-section">
+                                Confirm and Send Email!
+                            </div>
+    
+                            <!-- Book Button -->
+                            <button type="submit" class="btn btn-primary mt-3">Confirm Appointment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script>
+        // Update label of file input when a file is selected
+        $('.custom-file-input').on('change', function() {
+            var fileName = $(this).val().split('\\').pop();
+            $(this).siblings('.custom-file-label').addClass('selected').html(fileName);
+        });
+    </script>
+
+</body>
+</html>
+
+
+
+{% endblock content %}

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription Form</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+        .header h1 {
+            font-size: 30px;
+            margin: 0;
+        }
+        .header p {
+            margin: 5px 0;
+        }
+        .section {
+            margin-top: 20px;
+        }
+        .section h2 {
+            font-size: 20px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        .patient-details, .doctor-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .patient-details div, .doctor-details div {
+            width: 48%;
+        }
+        .prescription-box {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .prescription-box h3 {
+            margin: 0 0 10px;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+        }
+        .signature {
+            margin-top: 30px;
+            text-align: right;
+            font-size: 18px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Med Vantage Hospital</h1>
+            <p>123 Health Avenue, Wellness City, ZIP 54321</p>
+            <p>Phone: (123) 456-7890 | Email: contact@medvantage.com</p>
+        </div>
+
+        <form method="POST">
+        <!-- Patient Details -->
+        <div class="section patient-section">
+            <h2>Patient Details</h2>
+            <div class="patient-details">
+                <div>
+                    <strong>Name:</strong>
+                    <input type="text" name="patient_name" placeholder="Enter patient name">
+                    
+                    <strong>Age:</strong>
+                    <input type="number" name="patient_age" placeholder="Enter patient age">
+                    
+                    <strong>Gender:</strong>
+                    <select name="patient_gender">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <strong>Date:</strong>
+                    <input type="date" name="prescription_date"  id="prescription_date" value="" readonly>
+                    
+                    <strong>Prescription ID:</strong>
+                    <input type="text" name="prescription_id" placeholder="Enter prescription ID" value="{{appointment.id}}" readonly>
+                    
+                    <strong>Contact:</strong>
+                    <input type="email" name="patient_contact" placeholder="Enter patient contact email" value="{{appointment.patient.email}}" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctor Details -->
+        <div class="section doctor-section">
+            <h2>Doctor Details</h2>
+            <div class="doctor-details">
+                <div>
+                    <strong>Doctor Name:</strong>
+                    <input type="text" name="doctor_name" placeholder="Enter doctor name" value="{{appointment.doctor.username}}" readonly>
+                    
+                    <strong>Specialty:</strong>
+                    <input type="text" name="doctor_specialty" placeholder="Enter doctor specialty" value="{{doctor.designation}}" readonly>
+                    
+                    <strong>License Number:</strong>
+                    <input type="text" name="doctor_license" placeholder="Enter license number" value="MedVantage#00{{doctor.id}}" readonly>
+                </div>
+                <!-- <div>
+                    <strong>Phone:</strong>
+                    <input type="tel" name="doctor_phone" placeholder="Enter phone number">
+                    
+                    <strong>Email:</strong>
+                    <input type="email" name="doctor_email" placeholder="Enter doctor email">
+                </div> -->
+            </div>
+        </div>
+
+        <!-- Prescription -->
+        <div class="section prescription-section">
+            <h2>Prescription</h2>
+            <div class="prescription-box">
+                <h3>Medications:</h3>
+                <textarea name="prescription_details" placeholder="List medications here"></textarea>
+            </div>
+        </div>
+
+        <!-- Signature -->
+        <div class="signature">
+            <p>__________________________</p>
+            <p>Dr. {{appointment.doctor.first_name}} {{appointment.doctor.last_name}}</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Med Vantage Hospital © 2024 - All rights reserved</p>
+        </div>
+    </div>
+    
+    <div class="d-flex justify-content-center mt-3 my-3">
+        {% csrf_token %}
+        <button type="submit" href="" class="btn btn-success">Finish</button>
+    </div>
+    </form>
+
+</body>
+<script>
+    // Set today's date in the date field
+    document.getElementById('prescription_date').value = new Date().toISOString().split('T')[0];
+</script>
+</html>

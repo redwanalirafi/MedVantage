@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | MedVantage</title>
+    <style>
+        body {
+            background-color: #f0f4f8;
+            display: flex;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .container {
+            max-width: 400px;
+            width: 100%;
+            margin: auto;
+        }
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .logo-container h1 {
+            font-size: 2rem;
+            color: #2C3E50;
+            font-weight: bold;
+        }
+        .card {
+            background-color: #fff;
+            padding: 20px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        .card p {
+            text-align: center;
+            color: #6c757d;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+        .form-actions {
+            text-align: center;
+        }
+        .form-actions a {
+            color: #4CAF50;
+            text-decoration: underline;
+        }
+        .form-actions a:hover {
+            color: #388E3C;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: #388E3C;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #6c757d;
+        }
+        .footer a {
+            color: #4CAF50;
+            text-decoration: underline;
+        }
+        .footer a:hover {
+            color: #388E3C;
+        }
+        .icon {
+            width: 48px;
+            height: 48px;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/>
+                <path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/>
+                <circle cx="20" cy="10" r="2"/>
+            </svg>
+           <h1> <a style="text-decoration:none" href="{% url 'home' %}">MedVantage</a></h1>
+        </div>
+        <div class="card">
+            <h2>Register</h2>
+            <p>Create your account by filling in the information below.</p>
+            {% for message in messages %}
+                <p style="color:red">{{ message|safe  }}</p>
+            {% endfor %}
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input name="username" type="text" placeholder="Enter your Full Name" required>
+                </div>
+               
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input name="password1" type="password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input name="password2" type="password" placeholder="Confirm your password" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">Register</button>
+                </div>
+            </form>
+            <br><br>
+        </div>
+        <div class="footer">
+            Already have an account? <a href="../login">Sign in</a>
+        </div>
+    </div>
+</body>
+</html>

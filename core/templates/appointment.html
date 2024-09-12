@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Booking Card</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            font-size: 1.2rem;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .btn-primary {
+            width: 100%;
+            border-radius: 20px;
+        }
+        .form-control, .custom-file-input {
+            border-radius: 10px;
+        }
+        .custom-file-label {
+            border-radius: 10px;
+        }
+        .fee-section {
+            font-size: 1.5rem;
+            color: #007bff;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header text-center">
+                        Booking Appointment for "Dr. ABC"
+                    </div>
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <!-- Date Field -->
+                            <div class="form-group">
+                                <label for="date">Choose a Date</label>
+                                <input type="date" class="form-control" id="date" name="date" required>
+                            </div>
+    
+                            <!-- Patient Name Field (auto-filled with logged-in user's username) -->
+                            <div class="form-group">
+                                <label for="patientName">Patient Name</label>
+                                <input type="text" class="form-control" id="patientName" value="{{ user.username }}" readonly>
+                            </div>
+    
+                            <!-- Age Field -->
+                            <div class="form-group">
+                                <label for="age"></label>
+                                <input type="number" class="form-control" id="meeting_link" name="meeting_link" placeholder="Enter age" required>
+                            </div>
+    
+                            <!-- File Upload Field -->
+                            <div class="form-group">
+                                <label for="uploadDocument">Upload Old Document</label>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="uploadDocument" name="document">
+                                    <label class="custom-file-label" for="uploadDocument" name="document">Choose file</label>
+                                </div>
+                            </div>
+    
+                            <!-- Fee Section -->
+                            <div class="fee-section">
+                                Fee: 1000 TAKA
+                            </div>
+    
+                            <!-- Book Button -->
+                            <button type="submit" class="btn btn-primary mt-3">Book Appointment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script>
+        // Update label of file input when a file is selected
+        $('.custom-file-input').on('change', function() {
+            var fileName = $(this).val().split('\\').pop();
+            $(this).siblings('.custom-file-label').addClass('selected').html(fileName);
+        });
+    </script>
+
+</body>
+</html>
+
+
+
+{% endblock content %}
