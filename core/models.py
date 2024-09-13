@@ -37,6 +37,7 @@ class Appointment(models.Model):
     document = models.FileField(upload_to='media/reports',null=True, blank=True)
     prescription = models.TextField(default="", null=True, blank=True)
     fee = models.IntegerField(default=1000)
+    review = models.TextField(null=True,blank=True, default="")
 
     def __str__(self):
         return f"Appointment with {self.doctor} on {self.date}"

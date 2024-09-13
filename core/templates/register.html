@@ -115,7 +115,7 @@
             <h2>Register</h2>
             <p>Create your account by filling in the information below.</p>
             {% for message in messages %}
-                <p style="color:red">{{ message|safe  }}</p>
+                {{ message|safe  }}
             {% endfor %}
             <form method="POST">
                 {% csrf_token %}

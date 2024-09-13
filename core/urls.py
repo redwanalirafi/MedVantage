@@ -11,6 +11,7 @@ urlpatterns = [
     path('register/',views.user_register,name="register"),
     path('complete_signup/',views.complete_profile,name="complete_profile"),
     path('logout/',views.user_logout,name="logout"),
+    path('review/<str:pk>',views.review,name="review"),
     path('dashboard/',views.user_dashboard,name="dashboard"),
     path('dashboard-doctor/',views.doctor_home,name="doctor_home"),
     path('dashboard-doctor/confirm/<int:pk>',views.doc_confirm_appointment,name="doc_confirm_appointment"),
@@ -18,6 +19,7 @@ urlpatterns = [
     path('dashboard-doctor/confirmed-appointments',views.confirmed_appointments,name="confirmed_appointments"),
     path('dashboard-doctor/prescription/<int:pk>',views.prescription_page,name="prescription_page"),
     path('dashboard-doctor/finish',views.finish_appointment,name="finish_appointment"),
+    path('dashboard-doctor/reviews',views.show_review,name="show_review"),
 
     
 

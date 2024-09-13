@@ -21,13 +21,23 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, ListFlowabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from io import BytesIO
 from reportlab.lib.units import inch
-
+from django.urls import reverse
 
 
 from io import BytesIO
 # from django.template.loader import get_template
 # from xhtml2pdf import pisa
 # Create your views here.
+
+def string_to_hex(s):
+    byte_representation = s.encode('utf-8')
+    hex_representation = byte_representation.hex()
+    return hex_representation
+
+def hex_to_string(hex_str):
+    byte_representation = bytes.fromhex(hex_str)
+    string_representation = byte_representation.decode('utf-8')
+    return string_representation
 
 def index(request):
     return render(request,"index2.html")
@@ -39,7 +49,7 @@ def user_register(request):
         if form.is_valid():
             print("VALID")
             form.save()
-            messages.success(request, '<p style="color:green">Registration Successfull<p>')
+            messages.success(request, 'Registration Successfull')
 
             return redirect('login')
         else:
@@ -106,7 +116,9 @@ def create_appointment(request, pk):
 
         form = AppointmentForm()
 
-    return render(request, 'appointment.html', {'form': form, 'user': request.user})
+    doc_obj = Doctor.objects.get(user__username=pk)
+    print(doc_obj.user.username)
+    return render(request, 'appointment.html', {'form': form, 'user': request.user, 'doc' : doc_obj})
 
 def admin_panel(request):
     return render(request, 'base_admin.html')
@@ -150,9 +162,39 @@ def doc_confirm_appointment(request,pk):
     if request.method == 'POST':
         appointment_data = Appointment.objects.get(id=pk)
         appointment_data.meeting_link = request.POST['meet']
+        appointment_data.fee= request.POST['fee']
         appointment_data.save()
-        return redirect('success_appointment_doc')
+
+        subject = 'MedVantage - Appointment Booked'
+        message = book1 + f"<a style='text-decoration: none; color:white' href='{request.POST['meet']}' class='btn-review'>Google Meet</a>." + book2
+        from_email = settings.DEFAULT_FROM_EMAIL
+
+        recipient_list = [appointment_data.patient.email]
+     
+
+        
+        # Create the email
+        email = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=from_email,
+            to=recipient_list,
+        )
+
+        email.content_subtype = 'html' 
+
+        try:
+            # send_mail(subject, message, from_email, recipient_list)
+
+            # Send the email
+            email.send()
+            print("GG")
+            return redirect('success_appointment_doc')
+        except Exception as e:
+            return HttpResponse(f'An error occurred: {e}')
+        
     return render(request, 'doc_confirm_appointment.html')
+    
 
 @login_required
 @doctor_required
@@ -185,16 +227,27 @@ def prescription_page(request,pk):
         "doc_url" : document_url
     }   
 
+    scheme = request.scheme
+    host = request.get_host()
+    base_url = f"{scheme}://{host}/"
+
+    review_url = base_url+"review/" + string_to_hex(f"{my_appointment.patient.username}:{my_appointment.id}")
+
+   
+    print(review_url)
+
     if request.method == 'POST':
         
         
         prescrip= request.POST.getlist('medications[]')
         
+        print(prescrip)
+
         my_appointment.prescription = f"Patient Name: {my_appointment.patient.first_name} {my_appointment.patient.last_name}\nAge: {user_age}\n\nMedicines:\n{prescrip}"
         my_appointment.save()
 
         subject = 'MedVantage - Medical Document'
-        message = final_temp
+        message = final_temp + f"<a style='text-decoration: none; color:white' href='{review_url}' class='btn-review'>Leave a Review</a>." + final_part2
         from_email = settings.DEFAULT_FROM_EMAIL
 
         recipient_list = [my_appointment.patient.email]
@@ -263,7 +316,7 @@ def prescription_page(request,pk):
 
         try:
             # send_mail(subject, message, from_email, recipient_list)
-
+            print("")
             # Send the email
             email.send()
             return redirect('finish_appointment')
@@ -299,9 +352,39 @@ def complete_profile(request):
         user_profile, created = UserProfile.objects.get_or_create(user=user_obj)
         user_profile.age = age
         user_profile.save()
+        return redirect('dashboard')
 
     return render(request, 'complete_profile2.html')
 
 
 def finish_appointment(request):
     return render(request, 'finish_appointment.html')
+
+def review(request,pk):
+    hex_str = hex_to_string(pk)
+    username = hex_str.split(':')[0]
+    app_id = int(hex_str.split(':')[1])
+
+    appointment_obj = Appointment.objects.get(id=app_id)
+
+    if request.method == "POST":
+        p_review = request.POST.get('p_review' , '')
+        appointment_obj.review = p_review
+        appointment_obj.save()
+        return redirect('home')
+    context = {
+        "username" : username 
+    }
+
+    return render(request, 'write_review.html', context)
+
+
+def show_review(request):
+    reviews_obj = Appointment.objects.filter(doctor=request.user).exclude(review="")
+
+    print(reviews_obj)
+
+    context = {
+        "appointment" : reviews_obj
+    }
+    return render(request, 'show_review.html',context)

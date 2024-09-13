@@ -68,7 +68,7 @@
             text-align: right;
             font-size: 18px;
         }
-        input, textarea {
+        input, select, textarea {
             width: 100%;
             padding: 8px;
             margin-top: 5px;
@@ -80,7 +80,6 @@
 </head>
 <body>
     <div class="container">
-       
         <!-- Header -->
         <div class="header">
             <h1>Med Vantage Hospital</h1>
@@ -88,22 +87,17 @@
             <p>Phone: (123) 456-7890 | Email: contact@medvantage.com</p>
         </div>
         
-        
-
-        
         <!-- Patient Details -->
         <div class="section patient-section">
-            <h6>Old Documents of the patient : <a href="{{doc_url}}" class="btn btn-outline-dark" target="_blank">View</a></h6>
+            <h6>Old Documents of the patient: <a href="{{doc_url}}" class="btn btn-outline-dark" target="_blank">View</a></h6>
             <h2>Patient Details</h2>
             <form method="POST">  
             <div class="patient-details">
                 <div>
                     <strong>Name:</strong>
-                    <input type="text" name="patient_name" placeholder="Enter patient name" value="{{appointment.patient.first_name}} {{appointment.patient.last_name}}" disabled>
-                    
+                    <input type="text" name="patient_name" value="{{appointment.patient.first_name}} {{appointment.patient.last_name}}" disabled>
                     <strong>Age:</strong>
-                    <input type="number" name="patient_age" placeholder="Enter patient age" value="{{patient_age}}" disabled>
-                    
+                    <input type="number" name="patient_age" value="{{patient_age}}" disabled>
                     <strong>Gender:</strong>
                     <select name="patient_gender">
                         <option value="male">Male</option>
@@ -113,38 +107,26 @@
                 </div>
                 <div>
                     <strong>Date:</strong>
-                    <input type="date" name="prescription_date"  id="prescription_date" value="" disabled>
-                    
+                    <input type="date" name="prescription_date" id="prescription_date" disabled>
                     <strong>Prescription ID:</strong>
-                    <input type="text" name="prescription_id" placeholder="Enter prescription ID" value="{{appointment.id}}" disabled>
-                    
+                    <input type="text" name="prescription_id" value="{{appointment.id}}" disabled>
                     <strong>Contact:</strong>
-                    <input type="email" name="patient_contact" placeholder="Enter patient contact email" value="{{appointment.patient.email}}" disabled>
+                    <input type="email" name="patient_contact" value="{{appointment.patient.email}}" disabled>
                 </div>
             </div>
-        </div>
-
+        
         <!-- Doctor Details -->
         <div class="section doctor-section">
             <h2>Doctor Details</h2>
             <div class="doctor-details">
                 <div>
                     <strong>Doctor Name:</strong>
-                    <input type="text" name="doctor_name" placeholder="Enter doctor name" value="{{appointment.doctor.username}}" disabled>
-                    
+                    <input type="text" name="doctor_name" value="{{appointment.doctor.username}}" disabled>
                     <strong>Specialty:</strong>
-                    <input type="text" name="doctor_specialty" placeholder="Enter doctor specialty" value="{{doctor.designation}}" disabled>
-                    
+                    <input type="text" name="doctor_specialty" value="{{doctor.designation}}" disabled>
                     <strong>License Number:</strong>
-                    <input type="text" name="doctor_license" placeholder="Enter license number" value="MedVantage#00{{doctor.id}}" disabled>
+                    <input type="text" name="doctor_license" value="MedVantage#00{{doctor.id}}" disabled>
                 </div>
-                <!-- <div>
-                    <strong>Phone:</strong>
-                    <input type="tel" name="doctor_phone" placeholder="Enter phone number">
-                    
-                    <strong>Email:</strong>
-                    <input type="email" name="doctor_email" placeholder="Enter doctor email">
-                </div> -->
             </div>
         </div>
 
@@ -173,39 +155,36 @@
         <div class="footer">
             <p>Med Vantage Hospital © 2024 - All rights reserved</p>
         </div>
+
+        <div class="d-flex justify-content-center mt-3 my-3">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Finish</button>
+        </div>
+        </form>
     </div>
-    
-    <div class="d-flex justify-content-center mt-3 my-3">
-        {% csrf_token %}
-        <button type="submit" href="" class="btn btn-success">Finish</button>
-    </div>
-    </form>
-    
+
+    <script>
+        // Set today's date in the date field
+        document.getElementById('prescription_date').value = new Date().toISOString().split('T')[0];
+
+        function addMedicineField() {
+            // Create a new div element for the medicine field
+            const newField = document.createElement('div');
+            newField.className = 'medicine-field';
+        
+            // Add an input element for the medication name
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = 'medications[]';
+            input.placeholder = 'Enter medication name';
+            input.className = 'form-control mb-2';
+        
+            // Append the input to the new field
+            newField.appendChild(input);
+        
+            // Append the new field to the medications container
+            document.getElementById('medicationsContainer').appendChild(newField);
+        }
+    </script>
 </body>
-<script>
-    // Set today's date in the date field
-    document.getElementById('prescription_date').value = new Date().toISOString().split('T')[0];
-
-    function addMedicineField() {
-        // Create a new div element for the medicine field
-        const newField = document.createElement('div');
-        newField.className = 'medicine-field';
-
-        // Add an input element for the medication name
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.name = 'medications[]';
-        input.placeholder = 'Enter medication name';
-        input.className = 'form-control mb-2';
-
-        // Append the input to the new field
-        newField.appendChild(input);
-
-        // Append the new field to the medications container
-        document.getElementById('medicationsContainer').appendChild(newField);
-    }
-
-    
-</script>
-
 </html>
