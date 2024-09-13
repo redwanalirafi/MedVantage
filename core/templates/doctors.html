@@ -18,7 +18,12 @@
                 </div>
             </div>
             {% if forloop.counter|divisibleby:3 %}</div><div class="row">{% endif %}
-            {% if forloop.last %}</div>{% endif %}
+
+            
+            {% if forloop.last %}
+            {% if not forloop.counter|divisibleby:3 %} <div class="col"></div> {% endif %}
+            </div>
+            {% endif %}
         {% endfor %}
     </div>
         

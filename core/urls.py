@@ -2,10 +2,14 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 
+from django.conf.urls.static import static
+from django.conf import settings
+
 urlpatterns = [
     path('',views.index,name="home"),
     path('login/',views.user_login,name="login"),
     path('register/',views.user_register,name="register"),
+    path('complete_signup/',views.complete_profile,name="complete_profile"),
     path('logout/',views.user_logout,name="logout"),
     path('dashboard/',views.user_dashboard,name="dashboard"),
     path('dashboard-doctor/',views.doctor_home,name="doctor_home"),
@@ -13,6 +17,7 @@ urlpatterns = [
     path('dashboard-doctor/confirm/success',views.success_appointment_doc,name="success_appointment_doc"),
     path('dashboard-doctor/confirmed-appointments',views.confirmed_appointments,name="confirmed_appointments"),
     path('dashboard-doctor/prescription/<int:pk>',views.prescription_page,name="prescription_page"),
+    path('dashboard-doctor/finish',views.finish_appointment,name="finish_appointment"),
 
     
 
@@ -27,4 +32,4 @@ urlpatterns = [
     path('admin-panel/add-doctor',views.add_doctor,name="add-doctor"),
     
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

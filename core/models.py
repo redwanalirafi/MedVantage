@@ -35,7 +35,8 @@ class Appointment(models.Model):
     date = models.CharField(max_length=50)
     meeting_link=models.CharField(max_length=50,default="no")
     document = models.FileField(upload_to='media/reports',null=True, blank=True)
-    prescription = models.TextField(default="")
+    prescription = models.TextField(default="", null=True, blank=True)
+    fee = models.IntegerField(default=1000)
 
     def __str__(self):
         return f"Appointment with {self.doctor} on {self.date}"
@@ -45,7 +46,13 @@ class PatientDocs(models.Model):
     patient_document = models.FileField(upload_to='media/reports')
 
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    age = models.IntegerField(null=True, blank=True)
 
+    def __str__(self):
+        return f"Profile of {self.user.username}"
+    
 
 
 

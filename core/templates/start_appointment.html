@@ -80,24 +80,29 @@
 </head>
 <body>
     <div class="container">
+       
         <!-- Header -->
         <div class="header">
             <h1>Med Vantage Hospital</h1>
             <p>123 Health Avenue, Wellness City, ZIP 54321</p>
             <p>Phone: (123) 456-7890 | Email: contact@medvantage.com</p>
         </div>
+        
+        
 
-        <form method="POST">
+        
         <!-- Patient Details -->
         <div class="section patient-section">
+            <h6>Old Documents of the patient : <a href="{{doc_url}}" class="btn btn-outline-dark" target="_blank">View</a></h6>
             <h2>Patient Details</h2>
+            <form method="POST">  
             <div class="patient-details">
                 <div>
                     <strong>Name:</strong>
-                    <input type="text" name="patient_name" placeholder="Enter patient name">
+                    <input type="text" name="patient_name" placeholder="Enter patient name" value="{{appointment.patient.first_name}} {{appointment.patient.last_name}}" disabled>
                     
                     <strong>Age:</strong>
-                    <input type="number" name="patient_age" placeholder="Enter patient age">
+                    <input type="number" name="patient_age" placeholder="Enter patient age" value="{{patient_age}}" disabled>
                     
                     <strong>Gender:</strong>
                     <select name="patient_gender">
@@ -108,13 +113,13 @@
                 </div>
                 <div>
                     <strong>Date:</strong>
-                    <input type="date" name="prescription_date"  id="prescription_date" value="" readonly>
+                    <input type="date" name="prescription_date"  id="prescription_date" value="" disabled>
                     
                     <strong>Prescription ID:</strong>
-                    <input type="text" name="prescription_id" placeholder="Enter prescription ID" value="{{appointment.id}}" readonly>
+                    <input type="text" name="prescription_id" placeholder="Enter prescription ID" value="{{appointment.id}}" disabled>
                     
                     <strong>Contact:</strong>
-                    <input type="email" name="patient_contact" placeholder="Enter patient contact email" value="{{appointment.patient.email}}" readonly>
+                    <input type="email" name="patient_contact" placeholder="Enter patient contact email" value="{{appointment.patient.email}}" disabled>
                 </div>
             </div>
         </div>
@@ -125,13 +130,13 @@
             <div class="doctor-details">
                 <div>
                     <strong>Doctor Name:</strong>
-                    <input type="text" name="doctor_name" placeholder="Enter doctor name" value="{{appointment.doctor.username}}" readonly>
+                    <input type="text" name="doctor_name" placeholder="Enter doctor name" value="{{appointment.doctor.username}}" disabled>
                     
                     <strong>Specialty:</strong>
-                    <input type="text" name="doctor_specialty" placeholder="Enter doctor specialty" value="{{doctor.designation}}" readonly>
+                    <input type="text" name="doctor_specialty" placeholder="Enter doctor specialty" value="{{doctor.designation}}" disabled>
                     
                     <strong>License Number:</strong>
-                    <input type="text" name="doctor_license" placeholder="Enter license number" value="MedVantage#00{{doctor.id}}" readonly>
+                    <input type="text" name="doctor_license" placeholder="Enter license number" value="MedVantage#00{{doctor.id}}" disabled>
                 </div>
                 <!-- <div>
                     <strong>Phone:</strong>
@@ -146,9 +151,15 @@
         <!-- Prescription -->
         <div class="section prescription-section">
             <h2>Prescription</h2>
-            <div class="prescription-box">
+            <div class="prescription-box" id="prescriptionBox">
                 <h3>Medications:</h3>
-                <textarea name="prescription_details" placeholder="List medications here"></textarea>
+                <div id="medicationsContainer">
+                    <!-- Initial medication field -->
+                    <div class="medicine-field">
+                        <input type="text" name="medications[]" placeholder="Enter medication name" class="form-control mb-2">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="addMedicineField()">Add Medication</button>
             </div>
         </div>
 
@@ -169,10 +180,32 @@
         <button type="submit" href="" class="btn btn-success">Finish</button>
     </div>
     </form>
-
+    
 </body>
 <script>
     // Set today's date in the date field
     document.getElementById('prescription_date').value = new Date().toISOString().split('T')[0];
+
+    function addMedicineField() {
+        // Create a new div element for the medicine field
+        const newField = document.createElement('div');
+        newField.className = 'medicine-field';
+
+        // Add an input element for the medication name
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.name = 'medications[]';
+        input.placeholder = 'Enter medication name';
+        input.className = 'form-control mb-2';
+
+        // Append the input to the new field
+        newField.appendChild(input);
+
+        // Append the new field to the medications container
+        document.getElementById('medicationsContainer').appendChild(newField);
+    }
+
+    
 </script>
+
 </html>
