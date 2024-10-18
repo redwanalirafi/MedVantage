@@ -1,4 +1,4 @@
-{% extends "base_doc.html" %}
+{% extends "base_assis.html" %}
 
 {% block content %}
 <!DOCTYPE html>
@@ -67,7 +67,7 @@
 
                             <div class="form-group"></div>
                                 <label for="patientName">Enter Fee</label>
-                                <input type="text" class="form-control" name="fee" value="" >
+                                <input type="text" class="form-control" name="fee" value="{{doc.fee}}" disabled >
                             </div>
     
                             
@@ -80,6 +80,8 @@
     
                             <!-- Book Button -->
                             <button type="submit" class="btn btn-primary mt-3">Confirm Appointment</button>
+                            <br>
+                            <br>
                         </form>
                     </div>
                 </div>

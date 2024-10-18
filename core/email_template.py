@@ -162,11 +162,11 @@ book1 = """
         </div>
         <div class='content'>
             <p>Dear Customer,</p>
-            <p>We appreciate your trust in us. Your Appointment is booked. A staff member will call you shortly for payment details. Please use this 
+            <p>We appreciate your trust in us. Your Appointment is booked. A staff member will call you shortly for payment details. Please use this link 
 """
 
 book2 = """
-link to talk to the doctor.
+ to talk to the doctor.
 </p>
             <p>We’re always striving to improve, and your feedback is valuable to us!</p>
         </div>

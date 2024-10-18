@@ -1,0 +1,18 @@
+{% extends "base_assis.html" %}
+
+{% block content %}
+{% load static %}
+<div class="flex flex-col items-center">
+   
+    <div class="bg-muted p-4 rounded-md text-center">
+
+        <h2 class="text-xl font-semibold">Welcome to Med Vantage Assistant Dashboard</h2>
+        <p class="text-sm text-muted-foreground">Your personalized health management tool</p>
+
+    </div>
+    <br><br>
+    <img src="{% static 'images/assis.svg' %}" alt="" width="50%">
+</div>
+
+{% endblock content %}
+

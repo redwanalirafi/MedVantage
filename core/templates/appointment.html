@@ -51,7 +51,7 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header text-center">
-                        Booking Appointment for {{doc_obj.user.username}}
+                        Booking Appointment for {{ doc.user.username }}
                     </div>
                     <div class="card-body">
                         <form method="post" enctype="multipart/form-data">
@@ -60,8 +60,19 @@
                             <!-- Date Field -->
                             <div class="form-group">
                                 <label for="date">Choose a Date</label>
-                                <input type="date" class="form-control" id="date" name="date" required>
+                                <input type="date" class="form-control" id="date" name="date" value="{{ selected_date }}" onchange="this.form.submit();" required>
                             </div>
+                            
+                            <div class="form-group">
+                                <label for="time_slot">Choose a Time Slot</label>
+                                <select class="form-control" id="time_slot" name="time_slot" required>
+                                    <option value="" disabled selected>Select a slot</option>
+                                    {% for slot in available_slots %}
+                                        <option value="{{ slot }}">{{ slot }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
     
                             <!-- Patient Name Field (auto-filled with logged-in user's username) -->
                             <div class="form-group">
@@ -71,8 +82,8 @@
     
                             <!-- Age Field -->
                             <div class="form-group">
-                                <label for="age"></label>
-                                <input type="number" class="form-control" id="meeting_link" name="meeting_link" placeholder="Enter age" required>
+                                <label for="age">Age</label>
+                                <input type="number" class="form-control" id="age" name="meeting_link" placeholder="Enter age" required>
                             </div>
     
                             <!-- File Upload Field -->
@@ -86,7 +97,7 @@
     
                             <!-- Fee Section -->
                             <div class="fee-section">
-                                Fee: 1000 TAKA
+                                Fee: {{ doc.fee }} TAKA
                             </div>
     
                             <!-- Book Button -->
@@ -113,7 +124,4 @@
 
 </body>
 </html>
-
-
-
 {% endblock content %}

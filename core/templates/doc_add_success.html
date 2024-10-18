@@ -1,0 +1,25 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+   
+
+    <div class="container">
+        
+        <div class="success-box">
+            <i class="success-icon fas fa-check-circle"></i>
+            <div class="success-message">
+                <strong>Doctor added successfully</strong>
+            </div>
+            <div class="details">
+                <p><i class="fas fa-link"></i> 
+                    Admin power used to create this.
+                </p>
+            </div>
+            <br>
+            <a class="text-center" href="{% url 'doctor_home' %}">Home</a>
+        </div>
+
+    </div>
+
+
+{% endblock content %}

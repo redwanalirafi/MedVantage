@@ -1,5 +1,5 @@
 import os
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -13,15 +13,17 @@ from django.core.mail import EmailMessage
 from django.core.mail import send_mail
 from django.conf import settings
 from django.http import HttpResponse
-from  .email_template import *
-from io import BytesIO
+from .email_template import *
+from django.urls import reverse
+
+from datetime import datetime, timedelta
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, ListFlowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from io import BytesIO
 from reportlab.lib.units import inch
-from django.urls import reverse
+
 
 
 from io import BytesIO
@@ -68,9 +70,14 @@ def user_login(request):
             user = authenticate(request, username=username, password=password)
             if user:
                 login(request, user)
+                if user.is_staff:
+                    return redirect('admin_panel')
 
-                if Doctor.objects.filter(user=user).exists():
+                elif Doctor.objects.filter(user=user).exists():
                     return redirect('doctor_home')
+                
+                elif Doctor.objects.filter(assistant=user).exists():
+                    return redirect('assistant_dashboard')
                 
                 if not UserProfile.objects.filter(user=user).exists():
                     return redirect('complete_profile')
@@ -101,36 +108,78 @@ def see_doctors(request):
 
 @login_required
 def create_appointment(request, pk):
-    if not UserProfile.objects.filter(user = request.user).exists():
+    if not UserProfile.objects.filter(user=request.user).exists():
         return redirect('complete_profile')
+
+    doc_obj = Doctor.objects.get(user__username=pk)
+
     if request.method == 'POST':
         form = AppointmentForm(request.POST, request.FILES)
         if form.is_valid():
-            Appointment = form.save(commit=False)
-            Appointment.patient = User.objects.get(username=request.user.username)  # Automatically assign the logged-in user as the patient
-            Appointment.doctor = User.objects.get(username=pk)  # Set the doctor from the URL parameter (e.g., Dr. ABC)
-            Appointment.meeting_link = "no"
-            Appointment.save()
-            return redirect('success_appointment')  # Redirect to success page after booking
+            appointment = form.save(commit=False)
+            appointment.patient = request.user
+            appointment.doctor = doc_obj.user
+            appointment.save()
+            return redirect('success_appointment')
     else:
-
         form = AppointmentForm()
 
-    doc_obj = Doctor.objects.get(user__username=pk)
-    print(doc_obj.user.username)
-    return render(request, 'appointment.html', {'form': form, 'user': request.user, 'doc' : doc_obj})
+    # Generate 30-minute time slots between 9 AM and 5 PM
+    start_time = datetime.strptime("09:00", "%H:%M")
+    end_time = datetime.strptime("17:00", "%H:%M")
+    slots = []
+    while start_time < end_time:
+        slots.append(start_time.strftime("%H:%M"))
+        start_time += timedelta(minutes=30)
 
-def admin_panel(request):
-    return render(request, 'base_admin.html')
+    
+    selected_date = request.POST.get('date') 
+
+    print(f"{selected_date} SELECTED")
+
+    available_slots = slots
+    if selected_date:
+       
+        selected_date_obj = datetime.strptime(selected_date, "%Y-%m-%d").date()
+
+       
+        booked_slots = Appointment.objects.filter(doctor=doc_obj.user, date=selected_date_obj).values_list('time_slot', flat=True)
+        formated_booked_slots = []
+
+        for i in booked_slots:
+            formated_booked_slots.append(i.strftime("%H:%M"))
+            #print(i)
+
+       
+        available_slots = [slot for slot in slots if slot not in formated_booked_slots]
+
+
+    return render(request, 'appointment.html', {
+        'form': form,
+        'user': request.user,
+        'doc': doc_obj,
+        'available_slots': available_slots,
+        'selected_date': selected_date
+    })
+
+
 
 @login_required
 def success_appointment(request):
     return render(request,"success_appointment.html")
 
+
 @login_required
 def success_appointment_doc(request):
     return render(request,"success_appointment_doc.html")
 
+
+@admin_required
+def admin_panel(request):
+    return render(request, 'base_admin.html')
+
+
+@admin_required
 def admin_manage_users(request):
     obj= User.objects.all()
 
@@ -140,9 +189,121 @@ def admin_manage_users(request):
     }
     return render(request, 'admin_manage_users.html' ,context=context)
 
+
+def get_usernames(request):
+    query = request.GET.get('q', '')
+    if query:
+        users = User.objects.filter(username__icontains=query)[:5]
+        data = [{'username': user.username} for user in users]
+        return JsonResponse(data, safe=False)
+    return JsonResponse([], safe=False)
+
+
+@admin_required
 def add_doctor(request):
-    form = AddDoctorForm()
-    return render(request, 'add_doctor.html' ,context={'form' : form})
+    if request.method == 'POST':
+        user_id = request.POST.get('username')  
+        designation = request.POST.get('designation')  
+        fee = request.POST.get('fee') 
+        assistant_id = request.POST.get('assistant_id') 
+        
+        try:
+            user = User.objects.get(username=user_id) 
+            assistant = User.objects.get(id=assistant_id) if assistant_id else None 
+
+            if Doctor.objects.filter(user=user).exists():
+                return redirect('doc_add_success')
+           
+            doctor = Doctor.objects.create(
+                user=user,
+                designation=designation,
+                fee=fee,
+                assistant=assistant  # Optional field
+            )
+            
+            
+            return redirect('doc_add_success') 
+        except User.DoesNotExist:
+             return HttpResponse(f'An error occurred: Username not found')
+
+    return render(request, 'add_doctor.html')  # Render a form for the doctor
+
+    #return render(request, 'add_doctor.html' ,context={'form' : form})
+
+
+def doc_add_success(request):
+
+    return render(request, "doc_add_success.html")
+
+
+@admin_required
+def delete_doctor(request):
+    obj= Doctor.objects.all()
+
+    context={
+        "tatal_users" : obj.count(),
+        "data" : obj
+    }
+    print(obj.first().designation)
+    return render(request, 'admin_manage_doctor.html' ,context=context)
+ 
+@admin_required
+def admin_remove_user(request,pk):
+    user_obj = User.objects.get(id=pk)
+    user_obj.delete()
+
+    obj= User.objects.all()
+
+    context={
+        "tatal_users" : obj.count(),
+        "data" : obj
+    }
+
+    return redirect('admin_manage_users')
+
+@admin_required
+def admin_remove_doc(request,pk):
+    user_obj = Doctor.objects.get(id=pk)
+    user_obj.delete()
+
+    obj= User.objects.all()
+
+    context={
+        "tatal_users" : obj.count(),
+        "data" : obj
+    }
+
+    return redirect('delete-doctor')
+
+@admin_required
+def make_admin(request,pk):
+    user_obj = User.objects.get(id=pk)
+    user_obj.is_staff=True
+    user_obj.save()
+
+    obj= User.objects.all()
+
+    context={
+        "tatal_users" : obj.count(),
+        "data" : obj
+    }
+
+    return redirect('admin_manage_users')
+
+@admin_required
+def user_search(request):
+    query = request.GET.get('username', '')
+    if query:
+        users = User.objects.filter(username__icontains=query)  # Filter users by username
+    else:
+        users = User.objects.all()  # Show all users if no search query
+
+    total_users = users.count()  # Count the total number of users after filtering
+    context = {
+        'data': users,
+        'total_users': total_users,
+    }
+    return render(request, 'admin_manage_users.html', context)
 
 
 @login_required
@@ -159,14 +320,16 @@ def doctor_home(request):
 @login_required
 @doctor_required
 def doc_confirm_appointment(request,pk):
+
+    doc_obj = Doctor.objects.get(user=request.user.id)
     if request.method == 'POST':
         appointment_data = Appointment.objects.get(id=pk)
         appointment_data.meeting_link = request.POST['meet']
-        appointment_data.fee= request.POST['fee']
+        appointment_data.fee= doc_obj.fee
         appointment_data.save()
 
         subject = 'MedVantage - Appointment Booked'
-        message = book1 + f"<a style='text-decoration: none; color:white' href='{request.POST['meet']}' class='btn-review'>Google Meet</a>." + book2
+        message = book1 + f"<a style='text-decoration: none; color:white' href='{request.POST['meet']}' class='btn-review'>Google Meet</a> on {appointment_data.date} " + book2 + f"Please pay: {doc_obj.fee}. Thank You."
         from_email = settings.DEFAULT_FROM_EMAIL
 
         recipient_list = [appointment_data.patient.email]
@@ -193,7 +356,7 @@ def doc_confirm_appointment(request,pk):
         except Exception as e:
             return HttpResponse(f'An error occurred: {e}')
         
-    return render(request, 'doc_confirm_appointment.html')
+    return render(request, 'doc_confirm_appointment.html', {"doc" : doc_obj})
     
 
 @login_required
@@ -210,7 +373,8 @@ def confirmed_appointments(request):
 
 
 
-
+@login_required
+@doctor_required
 def prescription_page(request,pk):
 
     my_appointment = Appointment.objects.get(id=pk)
@@ -218,8 +382,11 @@ def prescription_page(request,pk):
     doctor_details = Doctor.objects.get(user=my_appointment.doctor)
 
     user_age = UserProfile.objects.get(user__username = my_appointment.patient.username).age
+    try:
+        document_url = request.build_absolute_uri(my_appointment.document.url)
+    except:
+        document_url = None
 
-    document_url = request.build_absolute_uri(my_appointment.document.url)
     context={
         "appointment" : my_appointment,
         "doctor" : doctor_details,
@@ -239,7 +406,7 @@ def prescription_page(request,pk):
     if request.method == 'POST':
         
         
-        prescrip= request.POST.getlist('medications[]')
+        prescrip= request.POST.get('medication')
         
         print(prescrip)
 
@@ -247,7 +414,7 @@ def prescription_page(request,pk):
         my_appointment.save()
 
         subject = 'MedVantage - Medical Document'
-        message = final_temp + f"<a style='text-decoration: none; color:white' href='{review_url}' class='btn-review'>Leave a Review</a>." + final_part2
+        message = final_temp + f"<a style='text-decoration: none; color:white' href='{review_url}' class='btn-review'>Leave a Review</a>. " + final_part2
         from_email = settings.DEFAULT_FROM_EMAIL
 
         recipient_list = [my_appointment.patient.email]
@@ -327,6 +494,7 @@ def prescription_page(request,pk):
     return render(request, 'start_appointment.html', context)
 
 
+
 def complete_profile(request):
     if request.method == 'POST':
         f_name = request.POST.get('firstName', '').strip()  # Remove extra spaces
@@ -369,16 +537,34 @@ def review(request,pk):
 
     if request.method == "POST":
         p_review = request.POST.get('p_review' , '')
-        appointment_obj.review = p_review
-        appointment_obj.save()
-        return redirect('home')
+        p_rating = request.POST.get('rating' , '')
+        password = request.POST.get('passwords' , '')
+
+        try:
+          
+            user = User.objects.get(username=username)
+
+           
+            if user.check_password(password):
+                appointment_obj.review = p_review
+                appointment_obj.rating = p_rating
+                appointment_obj.save()
+                return render(request, 'password_success.html')
+            else:
+                return HttpResponse('Password does not match.')
+        except User.DoesNotExist:
+            return HttpResponse('User not found.')
+
+        
+        
     context = {
         "username" : username 
     }
 
     return render(request, 'write_review.html', context)
 
-
+@login_required
+@doctor_required
 def show_review(request):
     reviews_obj = Appointment.objects.filter(doctor=request.user).exclude(review="")
 
@@ -388,3 +574,127 @@ def show_review(request):
         "appointment" : reviews_obj
     }
     return render(request, 'show_review.html',context)
+
+@login_required
+@doctor_required
+def profile(request):
+    
+    #my_appointment_obj = Appointment.objects.get(doctor=request.user)
+    
+    doctor_obj = Doctor.objects.get(user=request.user.id)
+
+    print(doctor_obj.user.first_name)
+    context = {
+            "doc" : doctor_obj
+    }
+    if request.method == "POST":
+        doc_fee = request.POST.get('fee' , '')
+        doctor_obj.fee = doc_fee
+        doctor_obj.save()
+        context['error_message'] =  "Data updated successfully."
+        
+
+    
+
+    return render(request, 'profile.html', context )
+
+
+@login_required
+@doctor_required
+def assistant_manager(request):
+    usernames = User.objects.values_list('username', flat=True)
+    
+    
+
+    doctor_obj = Doctor.objects.get(user=request.user.id)
+    
+    context = {
+        "usernames" : usernames,
+        "doc" : doctor_obj
+    }
+
+    if request.method == "POST":
+        assistant = request.POST.get('assistant' , '')
+
+        if assistant == '':  # Check if the input is empty
+            doctor_obj.assistant = None  # Remove the assistant
+            doctor_obj.save()
+            context['error_message'] = "Assistant removed successfully."
+
+        elif User.objects.filter(username = assistant).exists():
+            context['error_message'] =  "Assistant Added Successfully."
+            doctor_obj.assistant = User.objects.get(username = assistant)
+            doctor_obj.save()
+        
+        else:
+            context['error_message'] =  "Username Not Found!"
+
+
+    return render(request, 'assistant_manager.html', context)
+
+
+@login_required
+@assistant_required
+def assistant_dashboard(request):
+    context={
+
+    }
+
+
+    return render(request, 'home_assis.html', context)
+
+
+@login_required
+@assistant_required
+def confirmed_appointments_assis(request):
+    doc_obj = Doctor.objects.filter(assistant=request.user).first()
+
+    my_appointments=Appointment.objects.filter(doctor=doc_obj.user,meeting_link="no")
+    # print(f"username: {request.user.username}" )
+    
+    context={
+        "appointments" : my_appointments
+    }
+    return render(request, 'pending_assis.html' , context)
+
+
+def assis_confirm_appointment(request,pk):
+    
+    doc_obj = Doctor.objects.filter(assistant=request.user).first()
+
+    
+    if request.method == 'POST':
+        appointment_data = Appointment.objects.get(id=pk)
+        appointment_data.meeting_link = request.POST['meet']
+        appointment_data.fee = doc_obj.fee
+        appointment_data.save()
+
+        subject = 'MedVantage - Appointment Booked'
+        message = book1 + f"<a style='text-decoration: none; color:white' href='{request.POST['meet']}' class='btn-review'>Google Meet</a> on {appointment_data.date} " + book2 + f"Please pay: {doc_obj.fee}. Thank You."
+        from_email = settings.DEFAULT_FROM_EMAIL
+
+        recipient_list = [appointment_data.patient.email]
+     
+
+        
+        # Create the email
+        email = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=from_email,
+            to=recipient_list,
+        )
+
+        email.content_subtype = 'html' 
+
+        try:
+            # send_mail(subject, message, from_email, recipient_list)
+
+            # Send the email
+            email.send()
+            print("GG")
+            return redirect('success_appointment_doc')
+        except Exception as e:
+            return HttpResponse(f'An error occurred: {e}')
+        
+    return render(request, 'doc_confirm_appointment.html', {"doc" : doc_obj})

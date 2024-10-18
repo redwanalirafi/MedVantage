@@ -31,6 +31,32 @@
         .form-label {
             font-weight: bold;
         }
+        /* Style for the star rating */
+        .star-rating {
+            display: flex;
+            justify-content: center;
+            flex-direction: row-reverse;
+            font-size: 2rem;
+        }
+
+        .star-rating input {
+            display: none; /* Hide the radio buttons */
+        }
+
+        .star-rating label {
+            color: #ddd; /* Light gray stars */
+            cursor: pointer;
+            font-size: 2rem;
+        }
+
+        .star-rating input:checked ~ label {
+            color: #ffcc00; /* Yellow for selected stars */
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #ffcc00; /* Highlight stars on hover */
+        }
     </style>
 </head>
 <body>
@@ -40,12 +66,36 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" placeholder="Enter your username" value="{{username}}" readonly>
+                <input type="text" class="form-control" name="username" placeholder="Enter your username" value="{{username}}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="username" class="form-label">Password</label>
+                <input type="password" class="form-control" name="passwords" placeholder="Enter your password">
             </div>
             <div class="form-group">
                 <label for="review" class="form-label">Review</label>
                 <textarea class="form-control" name="p_review" rows="4" placeholder="Write your review here"></textarea>
             </div>
+
+            <label for="username" class="form-label">Rating</label>
+            <div class="star-rating" class="shadow">
+                <input type="radio" id="star5" name="rating" value="5">
+                <label for="star5" title="5 stars">★</label>
+                
+                <input type="radio" id="star4" name="rating" value="4">
+                <label for="star4" title="4 stars">★</label>
+                
+                <input type="radio" id="star3" name="rating" value="3">
+                <label for="star3" title="3 stars">★</label>
+                
+                <input type="radio" id="star2" name="rating" value="2">
+                <label for="star2" title="2 stars">★</label>
+                
+                <input type="radio" id="star1" name="rating" value="1">
+                <label for="star1" title="1 star">★</label>
+            </div>
+            <br><br>
+    
             <button type="submit" class="btn btn-submit btn-block">Submit Review</button>
         </form>
     </div>

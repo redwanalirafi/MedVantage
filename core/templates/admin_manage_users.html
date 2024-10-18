@@ -1,27 +1,55 @@
 {% extends "base_admin.html" %}
 
 {% block content %}
-    <h2>Total Users: {{tatal_users}}</h2>
-    {% for user in data %}
-    <div class="card" >
-        
-        <div class="row g-0 align-items-center">
-           
-           
-                
-                <div class="card-body">
-                   
-                    <h5 class="card-title">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="25" height="20" class="m-3">
+    <h4 class=""><strong>Total Users: {{ tatal_users }}</strong></h4><br>
+
+    <!-- Search Box -->
+    <form method="GET" action="{% url 'your_search_view_url' %}" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" name="username" placeholder="Search by username" aria-label="Search by username" required>
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
+
+    <div class="row g-4">  <!-- Use Bootstrap's row for better layout -->
+        {% for user in data %}
+        <div class="col-md-4">  <!-- Adjust the column size as needed -->
+            <div class="card" style="background-color: #4A4947; color: white; border: 1px solid #B17457; border-radius: 8px; overflow: hidden;">
+                <div class="row g-0 align-items-center">
+                    <div class="col-3 d-flex justify-content-center align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="50" height="50" class="m-3">
                             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
                             <circle cx="9" cy="7" r="4"/>
                         </svg>
-                        {{user}}</h5>
-                    <p class="card-text"><span style="color:green; font-weight: bold;"> Stuff: </span> {{user.is_staff}}</p>
-                    
+                    </div>
+                    <div class="col-9 card-body">
+                        <h5 class="card-title">{{ user }}</h5>
+                        <p class="card-text"><span style="color:rgb(155, 255, 155); font-weight: bold;">Admin Permission:</span> {{ user.is_staff }}</p>
+                        <button type="button" class="btn btn-danger" onclick="removeUser('{{ user.id }}')">Remove</button>
+                        <button type="button" class="btn btn-success" onclick="makeAdmin('{{ user.id }}')">Make Admin</button>
+                    </div>
                 </div>
-            
+            </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
+
+    <script>
+        function removeUser(userId) {
+            if (confirm("Are you sure you want to remove this user?")) {
+                // Make an AJAX call or redirect to a Django view to handle user removal
+                // For example, redirect to a URL to handle the removal
+                window.location.href = `./remove-user/${userId}/`; // Adjust the URL as needed
+            }
+        }
+
+        function makeAdmin(userId) {
+            if (confirm("Are you sure you want to make this user admin?")) {
+                // Make an AJAX call or redirect to a Django view to handle user removal
+                // For example, redirect to a URL to handle the removal
+                window.location.href = `./make-admin/${userId}/`; // Adjust the URL as needed
+            }
+        }
+    </script>
+        
 {% endblock content %}

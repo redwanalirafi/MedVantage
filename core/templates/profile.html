@@ -1,0 +1,66 @@
+
+{% extends "base_doc.html" %}
+
+{% block content %}
+
+
+
+
+
+<div class="container">
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card" style="height: 100%; width: 100%;">
+                <div class="card-header1 pt-4 text-white text-center">
+                    <h3 class="p-2" style="background-color: #1271ad;">Edit Profile</h3>
+                </div>
+                <div class="card-body text-center">
+                    <!-- Profile Demo Photo -->
+                    <img src="https://i.pinimg.com/564x/9d/17/04/9d1704b0f3d9135472efba85d75321be.jpg" width="150px" alt="Profile Photo" class="profile-photo mb-4">
+                    
+                    <!-- Display error message if provided -->
+                    {% if error_message %}
+                    <div class="alert alert-warning" role="alert">
+                        {{ error_message }}
+                    </div>
+                    {% endif %}
+                    
+                    <form id="profileForm" method="POST" >
+                        {% csrf_token %}
+                        <!-- First Name, Last Name, and Email -->
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">Full Name</label>
+                            <input type="text" value="{{doc.user.first_name}} {{doc.user.last_name}}" class="form-control" id="firstName" name="firstName" placeholder="Enter your first name" disabled>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" value="{{doc.user.email}}" class="form-control" id="email" name="user_email" placeholder="Enter your email address" disabled>
+                        </div>
+                    
+                        
+                        
+                        <!-- New Input Field: Fee -->
+                        <div class="mb-3">
+                            <label for="fee" class="form-label">Fee</label>
+                            <input type="number" value="{{doc.fee}}" class="form-control" name="fee" id="fee" placeholder="Enter your fee" required>
+                        </div>
+                        <a class="btn btn-success" href="{% url 'assistant_manager' %}" style="background-color: #0f476a;">Assistant Manager</a>
+                        <button type="submit" class="btn btn-success w-100 my-5" style="background-color: #1271ad;">Update</button>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+{% endblock content %}

@@ -13,7 +13,8 @@
                         <img src="https://cdn-icons-png.flaticon.com/512/9193/9193824.png" width="50%" class="rounded-circle mb-3" alt="Doctor Icon">
                         <h5 class="card-title">{{doctor.user.first_name}} {{doctor.user.last_name}}</h5>
                         <p class="card-text text-muted">{{doctor.designation}}</p>
-                        <a href="../create-appointment/{{doctor.user.username}}" class="btn btn-outline-dark">Book Appointment</a>
+                        <p class="card-text text-muted">Fee: {{doctor.fee}}/-</p>
+                        <a href="../create-appointment/{{doctor.user.username}}" class="btn btn-dark">Book Appointment</a>
                     </div>
                 </div>
             </div>

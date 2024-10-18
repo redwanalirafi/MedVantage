@@ -1,0 +1,44 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+    <h4 class=""><strong>Total Doctors: {{ tatal_users }}</strong></h4><br>
+
+    <!-- Search Box -->
+    
+    {% load static %}
+    <div class="row g-4">  <!-- Use Bootstrap's row for better layout -->
+        {% for user in data %}
+        <div class="col-md-4">  <!-- Adjust the column size as needed -->
+            <div class="card" style="background-color: #4A4947; color: white; border: 1px solid #B17457; border-radius: 8px; overflow: hidden;">
+                <div class="row g-0 align-items-center">
+                    <div class="col-12 text-center"> <!-- Use col-12 and text-center to center the image -->
+                        <img src="{% static 'images/doc.jpg' %}" alt="" width="100px" height="100px" style="border-radius: 50%; object-fit: cover;" >
+                    </div>
+                   
+                    <hr class="mt-4">
+                    <div class="col-12 card-body">
+                        <h5 class="card-title"><strong>Doctor:</strong> {{ user.user.username }}</h5>
+                        <h6><strong>Designation:</strong> {{user.designation}}</h6>
+                        <p class="card-text"><span style="color:rgb(155, 255, 155); font-weight: bold;">Fee Takes: {{user.fee}}</span> {{ user.is_staff }}</p>
+                        <button type="button" class="btn btn-danger" onclick="removeDoc('{{ user.id }}')">Remove</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% endfor %}
+    </div>
+
+    <script>
+        function removeDoc(userId) {
+            if (confirm("Are you sure you want to remove this Doctor?")) {
+                // Make an AJAX call or redirect to a Django view to handle user removal
+                // For example, redirect to a URL to handle the removal
+                window.location.href = `./remove-doc/${userId}/`; // Adjust the URL as needed
+            }
+        }
+
+       
+    </script>
+        
+{% endblock content %}
